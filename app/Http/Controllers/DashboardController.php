@@ -1,13 +1,23 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(): RedirectResponse
     {
-        // Mengarahkan ke view dashboard bawaan Breeze (resources/views/dashboard.blade.php)
-        return view('dashboard');
+        $user = request()->user();
+
+        if (in_array($user->role, ['admin', 'satpam'], true)) {
+            return redirect()->route('campus.admin.dashboard', [
+                'campus' => $user->campus->slug,
+            ]);
+        }
+
+        return redirect()->route('campus.my.history', [
+            'campus' => $user->campus->slug,
+        ]);
     }
 }

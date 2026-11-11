@@ -24,20 +24,15 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-// Di dalam method store():
-$request->authenticate();
+        $request->authenticate();
+        $request->session()->regenerate();
 
-$request->session()->regenerate();
+        $user = $request->user();
+        $route = in_array($user->role, ['admin', 'satpam'], true)
+            ? 'campus.admin.dashboard'
+            : 'campus.home';
 
-// Ambil data user yang sedang login dengan aman
-$user = $request->user();
-
-// Cek apakah user ada dan tentukan arah redirect berdasarkan role-nya
-if ($user && ($user->role === 'admin' || $user->role === 'satpam')) {
-    return redirect()->intended(route('admin.dashboard'));
-}
-
-return redirect()->intended(route('home'));
+        return redirect()->intended(route($route, ['campus' => $user->campus->slug]));
     }
 
     /**

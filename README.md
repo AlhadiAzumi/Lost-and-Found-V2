@@ -23,8 +23,7 @@ Proyek ini dikembangkan untuk memenuhi tugas mata kuliah **Rekayasa Perangkat Lu
 - Pengguna memilih portal dari halaman `/`; setiap portal memiliki URL `/kampus/{slug}`.
 - Pengunjung dapat mengajukan portal kampus dari halaman pemilihan kampus. Setelah disetujui admin platform, pemohon menerima tautan sekali pakai untuk membuat akun admin kampus.
 - Admin platform dapat membuat dan mengaktifkan/nonaktifkan portal melalui menu **Kelola Kampus** di web.
-- Untuk menyiapkan admin platform pertama kali, buat akun admin kampus, lalu tetapkan emailnya sebagai `PLATFORM_ADMIN_EMAIL` di environment deployment. Perintah `campus:promote-admin` dapat digunakan untuk memberikan peran admin kampus; akses kelola kampus tetap dibatasi ke email platform admin yang dikonfigurasi.
-- Perintah `campus:create` tetap tersedia sebagai opsi untuk pengelolaan melalui terminal.
+- Akses admin platform dibatasi oleh `PLATFORM_ADMIN_EMAIL` dan peran akun `admin`. Portal kampus dikelola melalui menu **Kelola Kampus**; perintah Artisan `campus:create` dan `campus:promote-admin` tidak tersedia.
 
 ## 🛠️ Tech Stack
 - **Framework:** Laravel
@@ -81,7 +80,18 @@ Proyek ini dikembangkan untuk memenuhi tugas mata kuliah **Rekayasa Perangkat Lu
    ```
 Aplikasi dapat diakses melalui `http://localhost:8000`; halaman awal menampilkan pilihan kampus dan portal default berada di `/kampus/kampus-utama`.
 
-Untuk menyiapkan pengelola platform, tetapkan `PLATFORM_ADMIN_EMAIL=email-admin@domain.ac.id` di `.env` lokal atau Environment Variables deployment. Email itu harus dimiliki akun dengan role `admin`; gunakan perintah `campus:promote-admin` satu kali bila akun belum menjadi admin. Setelah login, pengelola dapat membuka **Kelola Kampus** dari menu dan membuat portal tanpa perintah terminal. Pengelolaan terminal tetap tersedia melalui `campus:create`.
+Untuk menyiapkan pengelola platform pertama kali, jalankan `php artisan tinker` setelah migrasi selesai, lalu buat akun admin pada portal default:
+
+```php
+\App\Models\User::create([
+    'name' => 'Platform Admin',
+    'email' => 'admin@example.com',
+    'password' => \Illuminate\Support\Facades\Hash::make('ganti-dengan-password-kuat'),
+    'role' => 'admin',
+]);
+```
+
+Tetapkan `PLATFORM_ADMIN_EMAIL` ke alamat email akun tersebut di `.env` lokal atau environment deployment. Setelah login, pengelola dapat membuka **Kelola Kampus** dari menu untuk mengelola portal.
 
 Pengiriman undangan admin kampus memerlukan mailer yang benar-benar mengirim email. `MAIL_MAILER=log` (nilai pengembangan lokal) hanya mencatat email ke log aplikasi; atur `MAIL_MAILER=smtp`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, dan `MAIL_FROM_ADDRESS` di environment deployment agar pemohon menerima tautan aktivasi.
 

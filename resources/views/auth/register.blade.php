@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('campus.register', ['campus' => $currentCampus->slug]) }}">
         @csrf
 
         <!-- Name -->
@@ -7,6 +7,18 @@
             <x-input-label for="name" :value="__('Name')" />
             <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="phone_number" :value="__('Nomor telepon')" />
+            <x-text-input id="phone_number" class="block mt-1 w-full" type="tel" name="phone_number" :value="old('phone_number')" required autocomplete="tel" />
+            <x-input-error :messages="$errors->get('phone_number')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="nim_nip" :value="__('NIM/NIP (opsional)')" />
+            <x-text-input id="nim_nip" class="block mt-1 w-full" type="text" name="nim_nip" :value="old('nim_nip')" autocomplete="off" />
+            <x-input-error :messages="$errors->get('nim_nip')" class="mt-2" />
         </div>
 
         <!-- Email Address -->
@@ -40,7 +52,7 @@
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
+            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('campus.login', ['campus' => $currentCampus->slug]) }}">
                 {{ __('Already registered?') }}
             </a>
 

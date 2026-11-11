@@ -9,11 +9,11 @@
         </p>
     </header>
 
-    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
+    <form id="send-verification" method="post" action="{{ route('campus.verification.send', ['campus' => $currentCampus->slug]) }}">
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('campus.profile.update', ['campus' => $currentCampus->slug]) }}" class="mt-6 space-y-6">
         @csrf
         @method('patch')
 
