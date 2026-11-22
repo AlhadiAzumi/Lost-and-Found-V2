@@ -1,4 +1,6 @@
 @php
+    use Illuminate\Support\Facades\Route;
+
     $campus = $currentCampus ?? request()->route('campus');
     $user = auth()->user();
     $isStaff = $user && in_array($user->role, ['admin', 'satpam', 'platform_admin'], true);
@@ -12,6 +14,18 @@
     $adminUrl = $campus ? route('campus.admin.dashboard', ['campus' => $campus->slug]) : route('admin.dashboard');
     $logoutUrl = $campus ? route('campus.logout', ['campus' => $campus->slug]) : route('logout');
     $loginUrl = $campus ? route('campus.login', ['campus' => $campus->slug]) : route('login');
+
+    $notificationsUrl = null;
+    if ($campus && Route::has('campus.notifications.index')) {
+        $notificationsUrl = route('campus.notifications.index', ['campus' => $campus->slug]);
+    } elseif (Route::has('notifications.index')) {
+        $notificationsUrl = route('notifications.index');
+    }
+
+    $unreadNotificationsCount = 0;
+    if ($user && method_exists($user, 'notifications')) {
+        $unreadNotificationsCount = $user->notifications()->whereNull('read_at')->count();
+    }
 @endphp
 
 <aside x-data="{ open: false }" class="w-full lg:w-[250px] shrink-0">
@@ -47,6 +61,24 @@
                         </svg>
                         <span>Profil</span>
                     </a>
+
+                    @if ($notificationsUrl)
+                        <a href="{{ $notificationsUrl }}"
+                           class="flex items-center justify-between gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition {{ request()->routeIs('notifications.*', 'campus.notifications.*') ? 'bg-[#141923] text-white shadow-sm' : 'text-slate-800 hover:bg-white/55' }}">
+                            <span class="flex items-center gap-3">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                </svg>
+                                <span>Notifikasi</span>
+                            </span>
+
+                            @if ($unreadNotificationsCount > 0)
+                                <span class="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-extrabold {{ request()->routeIs('notifications.*', 'campus.notifications.*') ? 'bg-emerald-400 text-[#141923]' : 'bg-[#141923] text-white' }}">
+                                    {{ $unreadNotificationsCount > 99 ? '99+' : $unreadNotificationsCount }}
+                                </span>
+                            @endif
+                        </a>
+                    @endif
 
                     <a href="{{ $lostUrl }}"
                        class="flex items-center gap-3 px-4 py-2.5 rounded-full text-sm font-semibold transition {{ request()->routeIs('campus.reports.lost.create') ? 'bg-[#141923] text-white shadow-sm' : 'text-slate-800 hover:bg-white/55' }}">

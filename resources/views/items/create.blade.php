@@ -5,6 +5,7 @@
         : route('campus.reports.store', ['campus' => $campus->slug]);
     $cancelUrl = route('campus.home', ['campus' => $campus->slug]);
     $selectedType = old('type', $defaultType ?? 'lost');
+    $isFound = $selectedType === 'found';
 @endphp
 
 <x-app-layout>
@@ -17,7 +18,11 @@
                     &larr; Kembali ke Feed Publik
                 </a>
                 <h1 class="text-2xl sm:text-[28px] font-extrabold tracking-tight text-[#141923]">
-                    {{ $item ? 'Edit Laporan Barang' : 'Buat Laporan Barang' }}
+                    @if ($item)
+                        Edit Laporan {{ $isFound ? 'Barang Temuan' : 'Barang Hilang' }}
+                    @else
+                        {{ $isFound ? 'Lapor Barang Ditemukan' : 'Lapor Barang Hilang' }}
+                    @endif
                 </h1>
             </div>
         </div>
@@ -41,29 +46,11 @@
                 @method('PUT')
             @endif
 
-            {{-- Section 1: Jenis Laporan & Informasi Utama --}}
-            <div class="rounded-[28px] bg-white/40 backdrop-blur-xl border border-white/65 shadow-[0_12px_36px_rgba(20,25,35,0.06)] p-6 sm:p-8 space-y-5">
-                {{-- Pill Switcher Jenis Laporan --}}
-                <div>
-                    <label for="type" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
-                        Jenis Laporan <span class="text-rose-600">*</span>
-                    </label>
-                    <div class="grid grid-cols-2 gap-3 p-1.5 rounded-full bg-white/45 border border-white/70 max-w-md">
-                        <button type="button" data-type-btn="lost"
-                                class="type-switch-btn py-2.5 px-4 rounded-full text-xs sm:text-sm font-bold transition {{ $selectedType === 'lost' ? 'bg-[#141923] text-white shadow-sm' : 'text-slate-700 hover:bg-white/60' }}">
-                            Barang Hilang
-                        </button>
-                        <button type="button" data-type-btn="found"
-                                class="type-switch-btn py-2.5 px-4 rounded-full text-xs sm:text-sm font-bold transition {{ $selectedType === 'found' ? 'bg-[#141923] text-white shadow-sm' : 'text-slate-700 hover:bg-white/60' }}">
-                            Barang Ditemukan
-                        </button>
-                    </div>
-                    <select id="type" name="type" required class="sr-only">
-                        <option value="lost" @selected($selectedType === 'lost')>Barang hilang</option>
-                        <option value="found" @selected($selectedType === 'found')>Barang ditemukan</option>
-                    </select>
-                </div>
+            {{-- Hidden Type (otomatis mengikuti menu navigasi atau data item saat edit) --}}
+            <input type="hidden" id="type" name="type" value="{{ $selectedType }}">
 
+            {{-- Section 1: Informasi Utama --}}
+            <div class="rounded-[28px] bg-white/40 backdrop-blur-xl border border-white/65 shadow-[0_12px_36px_rgba(20,25,35,0.06)] p-6 sm:p-8 space-y-5">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
                         <label for="title" class="block text-xs font-semibold text-slate-700 mb-1.5">
@@ -103,17 +90,12 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
                         <label for="location" class="block text-xs font-semibold text-slate-700 mb-1.5">
-                            Lokasi Hilang / Ditemukan <span class="text-rose-600">*</span>
+                            {{ $isFound ? 'Lokasi Ditemukan' : 'Lokasi Hilang' }} <span class="text-rose-600">*</span>
                         </label>
-                        <input id="location" name="location" type="text" list="campus-locations-list"
+                        <input id="location" name="location" type="text"
                                value="{{ old('location', $item?->location) }}" maxlength="150" required
                                placeholder="Contoh: Gedung Teknik Lantai 2 / Kantin"
                                class="w-full rounded-2xl border border-white/70 bg-white/60 backdrop-blur-md px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:bg-white/85 focus:border-[#141923] focus:ring-[#141923]">
-                        <datalist id="campus-locations-list">
-                            @foreach ($locations as $loc)
-                                <option value="{{ $loc->name }}">
-                            @endforeach
-                        </datalist>
                     </div>
 
                     <div>
@@ -251,7 +233,6 @@
 
     <script>
         const typeField = document.getElementById('type');
-        const typeButtons = document.querySelectorAll('.type-switch-btn');
         const foundSection = document.getElementById('found-only-section');
         const questionField = document.getElementById('security_question');
         const answerField = document.getElementById('security_answer');
@@ -259,15 +240,6 @@
 
         function updateFormMode() {
             const isFoundReport = typeField.value === 'found';
-
-            typeButtons.forEach((btn) => {
-                const active = btn.dataset.typeBtn === typeField.value;
-                btn.classList.toggle('bg-[#141923]', active);
-                btn.classList.toggle('text-white', active);
-                btn.classList.toggle('shadow-sm', active);
-                btn.classList.toggle('text-slate-700', !active);
-                btn.classList.toggle('hover:bg-white/60', !active);
-            });
 
             foundSection.hidden = !isFoundReport;
             questionField.required = isFoundReport;
@@ -278,14 +250,6 @@
             storageField.disabled = !isFoundReport;
         }
 
-        typeButtons.forEach((btn) => {
-            btn.addEventListener('click', () => {
-                typeField.value = btn.dataset.typeBtn;
-                updateFormMode();
-            });
-        });
-
-        typeField.addEventListener('change', updateFormMode);
         updateFormMode();
 
         // Storage Image Preview & Validation (Max 2MB)
