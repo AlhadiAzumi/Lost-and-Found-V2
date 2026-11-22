@@ -2,7 +2,8 @@
 
 namespace App\Providers;
 
-use App\Support\CampusContext;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -12,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(CampusContext::class);
+        //
     }
 
     /**
@@ -20,6 +21,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::composer('layouts.navigation', function ($view) {
+            $user = Auth::user();
+            $unreadNotificationsCount = 0;
+
+            if ($user && method_exists($user, 'notifications')) {
+                $unreadNotificationsCount = $user->notifications()
+                    ->whereNull('read_at')
+                    ->count();
+            }
+
+            $view->with('unreadNotificationsCount', $unreadNotificationsCount);
+        });
     }
 }

@@ -22,10 +22,7 @@
         $notificationsUrl = route('notifications.index');
     }
 
-    $unreadNotificationsCount = 0;
-    if ($user && method_exists($user, 'notifications')) {
-        $unreadNotificationsCount = $user->notifications()->whereNull('read_at')->count();
-    }
+    $unreadNotificationsCount ??= 0;
 @endphp
 
 <aside x-data="{ open: false }" class="w-full lg:w-[250px] shrink-0">
