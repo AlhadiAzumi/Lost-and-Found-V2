@@ -1,3 +1,42 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        @apply min-h-screen text-slate-900 antialiased selection:bg-[#23593a] selection:text-white overflow-x-hidden;
+        background: linear-gradient(135deg, #c6d8c5 0%, #dce7db 55%, #c8dac7 100%);
+        background-attachment: fixed;
+    }
+}
+
+@layer components {
+    /* Kartu Glass Ringan (Tanpa heavy blur yang bikin lag) */
+    .glass-card {
+        @apply bg-[#f4f7f4]/80 backdrop-blur-md border border-white/80 rounded-[24px] shadow-[0_8px_24px_rgba(35,89,58,0.06)] transition-all duration-200;
+    }
+
+    .glass-card-hover {
+        @apply glass-card hover:bg-white/95 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(35,89,58,0.11)];
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#111111] hover:bg-[#23593a] text-white font-semibold text-sm rounded-full transition-colors cursor-pointer;
+    }
+
+    .btn-emerald {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#23593a] hover:bg-[#19422b] text-white font-semibold text-sm rounded-full transition-colors cursor-pointer;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white/80 hover:bg-white text-slate-800 font-semibold text-sm border border-white rounded-full transition-colors cursor-pointer;
+    }
+
+    .input-glass {
+        @apply w-full px-4 py-2.5 bg-[#eef2ee] focus:bg-white border border-transparent focus:border-[#23593a]/30 rounded-full text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none transition-colors;
+    }
+
+    .badge-pill {
+        @apply inline-flex items-center gap-1 px-3 py-1 text-xs font-bold rounded-full;
+    }
+}
