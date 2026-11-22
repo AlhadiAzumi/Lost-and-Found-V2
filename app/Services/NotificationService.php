@@ -2,21 +2,42 @@
 
 namespace App\Services;
 
+use App\Mail\SystemNotificationMail;
 use App\Models\Claim;
 use App\Models\Item;
 use App\Models\Notification;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class NotificationService
 {
     public function notify(User $user, string $type, string $title, string $message, ?string $url = null): Notification
     {
-        return $user->notifications()->create([
+        $notification = $user->notifications()->create([
             'type' => $type,
             'title' => $title,
             'message' => $message,
             'url' => $url,
         ]);
+
+        if (! empty($user->email)) {
+            try {
+                Mail::to($user->email)->send(
+                    new SystemNotificationMail(
+                        recipientName: $user->name ?? 'Pengguna',
+                        notificationTitle: $title,
+                        notificationMessage: $message,
+                        actionUrl: $url,
+                    )
+                );
+            } catch (Throwable $e) {
+                Log::warning("Gagal mengirim email notifikasi ke {$user->email}: {$e->getMessage()}");
+            }
+        }
+
+        return $notification;
     }
 
     public function reportSubmitted(Item $item): void

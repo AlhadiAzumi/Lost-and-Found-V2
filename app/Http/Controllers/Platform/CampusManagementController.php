@@ -22,7 +22,7 @@ class CampusManagementController extends Controller
 {
     public function index(): View
     {
-        return view('admin.campuses', [
+        return view('admin.campuses.index', [
             'campuses' => Campus::query()->withCount('users')->orderBy('name')->paginate(20),
             'pendingApplications' => CampusApplication::query()->where('status', 'pending')->oldest()->get(),
             'awaitingAdminSetup' => CampusApplication::query()
