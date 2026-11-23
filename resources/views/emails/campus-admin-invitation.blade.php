@@ -31,11 +31,11 @@
                             </p>
 
                             <p style="margin: 0 0 16px; font-size: 15px; line-height: 1.6; color: #1E293B;">
-                                Permohonan portal <strong style="color: #141923;">{{ $application->name }}</strong> telah disetujui[cite: 34].
+                                Permohonan portal <strong style="color: #141923;">{{ $application->name }}</strong> telah disetujui.
                             </p>
 
                             <p style="margin: 0 0 26px; font-size: 14px; line-height: 1.65; color: #475569;">
-                                Gunakan tautan berikut untuk membuat akun admin portal[cite: 34]. Tautan berlaku selama <strong style="color: #141923;">7 hari</strong> dan hanya dapat digunakan <strong style="color: #141923;">sekali</strong>[cite: 34].
+                                Gunakan tautan berikut untuk membuat akun admin portal. Tautan berlaku selama <strong style="color: #141923;">7 hari</strong> dan hanya dapat digunakan <strong style="color: #141923;">sekali</strong>.
                             </p>
 
                             <!-- CTA Button -->
