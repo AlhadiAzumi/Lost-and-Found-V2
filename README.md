@@ -35,7 +35,7 @@ Proyek ini dikembangkan untuk memenuhi tugas mata kuliah **Rekayasa Perangkat Lu
 - **Project Manager:** Alhadi Azumi
 - **UI/UX Designer:** Rahmat Naufal, Fatia Azahara
 - **Frontend Developer:** Ayla Azzura, Fadhlul Hadi
-- **Backend & Database Developer:** Abdul Karim, Riska Ayu
+- **Backend & Database Developer:** Abdul Karim, Riska Ayu Nauli
 - **Quality Assurance (QA):** All Members
 
 ## 🚀 Cara Instalasi (Pengembangan Lokal)
